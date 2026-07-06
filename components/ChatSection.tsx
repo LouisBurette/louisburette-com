@@ -10,6 +10,8 @@ export default function ChatSection() {
   const locale = useLocale();
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const initializedRef = useRef(false);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,11 +21,11 @@ export default function ChatSection() {
   const [isComplete, setIsComplete] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [emailSent, setEmailSent] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
-    if (initialized) return;
-    setInitialized(true);
+    if (initializedRef.current) return;
+    initializedRef.current = true;
     sendToN8n([{ role: 'user', content: '.' }], true);
   }, []);
 
@@ -75,13 +77,18 @@ export default function ChatSection() {
 
   async function submitEmail() {
     if (!emailInput.trim() || emailSent) return;
-    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
-    await fetch('/api/complete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: emailInput, transcript: messages, lang: locale, summary: lastAssistant?.content || '' }),
-    });
-    setEmailSent(true);
+    try {
+      const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+      const res = await fetch('/api/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailInput, transcript: messages, lang: locale, summary: lastAssistant?.content || '' }),
+      });
+      if (!res.ok) throw new Error('Failed');
+      setEmailSent(true);
+    } catch {
+      setEmailError(true);
+    }
   }
 
   function formatSlot(iso: string) {
@@ -176,6 +183,11 @@ export default function ChatSection() {
           {isComplete && emailSent && (
             <div style={{ padding: '12px 16px', background: 'rgba(45,90,39,0.07)', border: '2px solid #2D5A27', color: '#2D5A27', fontSize: '13px', fontWeight: 600 }}>
               ✓ {t('email_sent')}
+            </div>
+          )}
+          {emailError && !emailSent && (
+            <div style={{ padding: '12px 16px', background: 'rgba(220,38,38,0.07)', border: '2px solid #DC2626', color: '#DC2626', fontSize: '13px', fontWeight: 600 }}>
+              {locale === 'fr' ? 'Erreur lors de l\'envoi. Veuillez réessayer.' : locale === 'es' ? 'Error al enviar. Por favor, inténtalo de nuevo.' : 'Error sending. Please try again.'}
             </div>
           )}
 

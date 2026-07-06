@@ -20,14 +20,16 @@ export default function TrailFooter() {
   const sectionRef = useRef<HTMLElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const linkedinRef = useRef<HTMLAnchorElement>(null);
+  const profileRef = useRef<SVGPathElement>(null);
+  const rectRef = useRef<SVGRectElement>(null);
+  const cursorRef = useRef<SVGCircleElement>(null);
+  const dropRef = useRef<SVGLineElement>(null);
 
   useEffect(() => {
-    const svg = document.getElementById('elev-svg') as SVGSVGElement | null;
-    if (!svg) return;
-    const profile = document.getElementById('elev-profile') as SVGPathElement | null;
-    const rect0 = document.getElementById('elev-rect') as SVGRectElement | null;
-    const cursor = document.getElementById('elev-cursor') as SVGCircleElement | null;
-    const drop = document.getElementById('elev-drop') as SVGLineElement | null;
+    const profile = profileRef.current;
+    const rect0 = rectRef.current;
+    const cursor = cursorRef.current;
+    const drop = dropRef.current;
     if (!profile || !rect0 || !cursor || !drop) return;
     const totalLength = profile.getTotalLength();
 
@@ -83,14 +85,14 @@ export default function TrailFooter() {
         <svg id="elev-svg" viewBox="0 0 1400 300" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '340px', display: 'block', pointerEvents: 'none' }}>
           <defs>
             <clipPath id="elev-reveal">
-              <rect id="elev-rect" x="0" y="0" width="0" height="300" />
+              <rect ref={rectRef} x="0" y="0" width="0" height="300" />
             </clipPath>
           </defs>
           <g>{buildPolylines(30, '#7FB069', 0.18, 0.0043, 0.8)}</g>
           <g clipPath="url(#elev-reveal)">{buildPolylines(30, '#E8622A', 1.0, 0.026, 0.8)}</g>
-          <path id="elev-profile" d={`M ${ELEVATION_POINTS.split(' ').map(p => p.replace(',', ' ')).join(' L ')}`} fill="none" stroke="none" />
-          <line id="elev-drop" x1="0" y1="0" x2="0" y2="288" stroke="#E8622A" strokeWidth="1.5" strokeDasharray="4,4" opacity="0" />
-          <circle id="elev-cursor" cx="0" cy="0" r="7" fill="#E8622A" stroke="#1B3A22" strokeWidth="3" opacity="0" />
+          <path ref={profileRef} d={`M ${ELEVATION_POINTS.split(' ').map(p => p.replace(',', ' ')).join(' L ')}`} fill="none" stroke="none" />
+          <line ref={dropRef} x1="0" y1="0" x2="0" y2="288" stroke="#E8622A" strokeWidth="1.5" strokeDasharray="4,4" opacity="0" />
+          <circle ref={cursorRef} cx="0" cy="0" r="7" fill="#E8622A" stroke="#1B3A22" strokeWidth="3" opacity="0" />
         </svg>
       </div>
 
