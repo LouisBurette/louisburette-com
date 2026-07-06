@@ -2,6 +2,10 @@ import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
 import ChatSection from '@/components/ChatSection';
+import Expertise from '@/components/Expertise';
+import Projets from '@/components/Projets';
+import Partenaire from '@/components/Partenaire';
+import Apropos from '@/components/Apropos';
 
 export default function Page() {
   return (
@@ -11,6 +15,10 @@ export default function Page() {
       <Marquee />
       <main>
         <ChatSection />
+        <Expertise />
+        <Projets />
+        <Partenaire />
+        <Apropos />
       </main>
     </>
   );
