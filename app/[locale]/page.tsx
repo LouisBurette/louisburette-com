@@ -1,3 +1,12 @@
+import Nav from '@/components/Nav';
+
 export default function Page() {
-  return <main style={{ padding: '48px' }}>Loading…</main>;
+  return (
+    <>
+      <Nav />
+      <main>
+        {/* sections à venir */}
+      </main>
+    </>
+  );
 }

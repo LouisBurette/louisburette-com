@@ -31,11 +31,13 @@ body {
   .projets-founders { grid-template-columns: 1fr !important; }
 }
 
+.nav-hamburger { display: none; }
+
 @media (max-width: 640px) {
   .hero-layout { flex-direction: column !important; }
   .hero-photo { width: 100% !important; max-width: 340px; margin: 0 auto; }
-  .nav-links { display: none; }
-  .nav-mobile-open .nav-links { display: flex; flex-direction: column; }
+  .nav-links { display: none !important; }
+  .nav-hamburger { display: block !important; }
   .section-padding { padding: 48px 20px !important; }
   .chat-input-row { flex-direction: column !important; }
 }
