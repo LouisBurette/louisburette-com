@@ -1,6 +1,7 @@
 import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
+import ChatSection from '@/components/ChatSection';
 
 export default function Page() {
   return (
@@ -8,7 +9,9 @@ export default function Page() {
       <Nav />
       <Hero />
       <Marquee />
-      <main>{/* sections à venir */}</main>
+      <main>
+        <ChatSection />
+      </main>
     </>
   );
 }
