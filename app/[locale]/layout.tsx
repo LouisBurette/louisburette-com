@@ -1,41 +1,48 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import '../globals.css';
+import { getMessages, getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
+import type { Metadata } from 'next';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
+type Props = { children: React.ReactNode; params: Promise<{ locale: string }> };
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'Louis Burette',
-  description: 'Product Builder & Consultant IA',
-};
-
-export default async function LocaleLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const messages = await getMessages();
+  const t = await getTranslations({ locale, namespace: 'meta' });
+  const base = 'https://louisburette.com';
+  const path = locale === 'fr' ? '' : `/${locale}`;
 
+  return {
+    title: t('title'),
+    description: t('description'),
+    metadataBase: new URL(base),
+    alternates: {
+      canonical: `${base}${path}`,
+      languages: { fr: base, en: `${base}/en`, es: `${base}/es`, 'x-default': base },
+    },
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: `${base}${path}`,
+      siteName: 'Louis Burette',
+      locale,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title: t('title'), description: t('description') },
+  };
+}
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
+  if (!routing.locales.includes(locale as 'fr' | 'en' | 'es')) notFound();
+  const messages = await getMessages();
   return (
-    <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      {children}
+    </NextIntlClientProvider>
   );
 }
