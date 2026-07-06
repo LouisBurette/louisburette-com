@@ -23,7 +23,7 @@ export default function Hero() {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-              <a href="#contact"
+              <a href="https://calendly.com/hello-louisburette/30min" target="_blank" rel="noreferrer"
                 style={{ display: 'inline-block', padding: '15px 30px', border: '3px solid #E8622A', background: '#E8622A', color: '#fff', fontSize: '13px', fontWeight: 700, textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase', boxShadow: '5px 5px 0 #1A1714', transition: 'all 0.12s' }}
                 onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#1A1714'; el.style.borderColor = '#1A1714'; el.style.boxShadow = '2px 2px 0 #1A1714'; }}
                 onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#E8622A'; el.style.borderColor = '#E8622A'; el.style.boxShadow = '5px 5px 0 #1A1714'; }}>

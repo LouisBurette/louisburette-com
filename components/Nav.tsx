@@ -1,6 +1,6 @@
 'use client';
 import { useTranslations, useLocale } from 'next-intl';
-import Link from 'next/link';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import { useState } from 'react';
 
 export default function Nav() {
@@ -8,11 +8,18 @@ export default function Nav() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   const locales = [
-    { code: 'fr', label: 'FR', href: '/' },
-    { code: 'en', label: 'EN', href: '/en' },
-    { code: 'es', label: 'ES', href: '/es' },
+    { code: 'fr', label: 'FR' },
+    { code: 'en', label: 'EN' },
+    { code: 'es', label: 'ES' },
   ];
+
+  const switchLocale = (code: string) => {
+    router.replace(pathname, { locale: code, scroll: false });
+  };
 
   const navLinks = [
     { href: '#expertise', label: t('expertise') },
@@ -37,9 +44,9 @@ export default function Nav() {
           {locales.map((loc, i) => (
             <span key={loc.code} style={{ display: 'flex', alignItems: 'center' }}>
               {i > 0 && <span style={{ width: '1px', background: 'rgba(26,23,20,0.15)', alignSelf: 'stretch' }} />}
-              <Link href={loc.href} style={{ padding: '6px 10px', display: 'block', fontFamily: "'Space Grotesk', sans-serif", fontSize: '11px', fontWeight: locale === loc.code ? 700 : 600, color: '#1A1714', opacity: locale === loc.code ? 1 : 0.4, textDecoration: 'none', letterSpacing: '0.06em' }}>
+              <button onClick={() => switchLocale(loc.code)} style={{ padding: '6px 10px', border: 'none', background: 'transparent', fontFamily: "'Space Grotesk', sans-serif", fontSize: '11px', fontWeight: locale === loc.code ? 700 : 600, color: '#1A1714', opacity: locale === loc.code ? 1 : 0.4, letterSpacing: '0.06em', cursor: 'pointer' }}>
                 {loc.label}
-              </Link>
+              </button>
             </span>
           ))}
         </div>
@@ -70,9 +77,9 @@ export default function Nav() {
             {locales.map((loc, i) => (
               <span key={loc.code} style={{ display: 'flex', alignItems: 'center' }}>
                 {i > 0 && <span style={{ width: '1px', background: 'rgba(26,23,20,0.15)', alignSelf: 'stretch' }} />}
-                <Link href={loc.href} style={{ padding: '8px 14px', display: 'block', fontSize: '13px', fontWeight: locale === loc.code ? 700 : 600, color: '#1A1714', opacity: locale === loc.code ? 1 : 0.4, textDecoration: 'none' }}>
+                <button onClick={() => { switchLocale(loc.code); setOpen(false); }} style={{ padding: '8px 14px', border: 'none', background: 'transparent', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: locale === loc.code ? 700 : 600, color: '#1A1714', opacity: locale === loc.code ? 1 : 0.4, cursor: 'pointer' }}>
                   {loc.label}
-                </Link>
+                </button>
               </span>
             ))}
           </div>

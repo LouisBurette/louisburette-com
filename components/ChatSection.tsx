@@ -5,12 +5,22 @@ import { useTranslations, useLocale } from 'next-intl';
 type Message = { role: 'user' | 'assistant'; content: string };
 type Slot = { startTime: string; schedulingUrl: string };
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/^#{1,3}\s+/gm, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\s*—\s*/g, ' - ')
+    .replace(/\s*--\s*/g, ' - ');
+}
+
 export default function ChatSection() {
   const t = useTranslations('chat');
   const locale = useLocale();
-  const bottomRef = useRef<HTMLDivElement>(null);
-
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -30,8 +40,15 @@ export default function ChatSection() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = messagesContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, loading, showSlots, isComplete]);
+
+  useEffect(() => {
+    if (isFullscreen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isFullscreen]);
 
   async function sendToN8n(msgs: Message[], isInit = false) {
     setLoading(true);
@@ -105,23 +122,42 @@ export default function ChatSection() {
         <p style={{ fontSize: '16px', opacity: 0.55, marginTop: '10px', fontWeight: 300, maxWidth: '560px' }}>{t('subtitle')}</p>
       </div>
 
-      <div style={{ maxWidth: '920px', margin: '0 auto', border: '3px solid #1A1714', boxShadow: '8px 8px 0 #E8622A', overflow: 'hidden' }}>
+      <div style={isFullscreen
+        ? { position: 'fixed', inset: 0, zIndex: 500, border: 'none', boxShadow: 'none', display: 'flex', flexDirection: 'column', background: '#F5EFE5' }
+        : { maxWidth: '920px', margin: '0 auto', border: '3px solid #1A1714', boxShadow: '8px 8px 0 #E8622A', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* Title bar */}
-        <div style={{ background: '#1A1714', padding: '13px 20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#2D5A27', display: 'block' }} />
-          <span style={{ fontSize: '11px', color: 'rgba(245,239,229,0.4)', fontWeight: 600, letterSpacing: '0.06em' }}>louisburette.com — AI</span>
+        <div style={{ background: '#1A1714', padding: '13px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#2D5A27', display: 'block' }} />
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(245,239,229,0.6)', letterSpacing: '0.04em' }}>
+              {locale === 'fr' ? 'Assistant personnel de Louis' : locale === 'es' ? 'Asistente personal de Louis' : "Louis's personal assistant"}
+            </span>
+          </div>
+          {isFullscreen ? (
+            <button onClick={() => setIsFullscreen(false)}
+              style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
+              aria-label="Fermer">
+              ← Retour
+            </button>
+          ) : (
+            <button onClick={() => setIsFullscreen(true)}
+              style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
+              aria-label="Plein écran">
+              Agrandir ↗
+            </button>
+          )}
         </div>
 
         {/* Messages */}
-        <div style={{ height: '340px', overflowY: 'auto', padding: '24px', background: '#F5EFE5', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div ref={messagesContainerRef} className="chat-messages" style={{ height: isFullscreen ? undefined : '340px', flex: isFullscreen ? 1 : undefined, overflowY: 'auto', padding: '24px', background: '#F5EFE5', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {messages.map((msg, i) => (
             msg.role === 'assistant' ? (
               <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                 <div style={{ width: '28px', height: '28px', border: '2px solid #1A1714', background: '#E8622A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.02em' }}>LB</span>
+                  <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>{locale === 'en' ? 'AI' : 'IA'}</span>
                 </div>
                 <div style={{ background: '#fff', border: '2px solid #1A1714', padding: '11px 15px', maxWidth: '540px', boxShadow: '3px 3px 0 rgba(26,23,20,0.07)' }}>
-                  <p style={{ fontSize: '14px', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{msg.content}</p>
+                  <p style={{ fontSize: '14px', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{stripMarkdown(msg.content)}</p>
                 </div>
               </div>
             ) : (
@@ -136,29 +172,10 @@ export default function ChatSection() {
           {loading && (
             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <div style={{ width: '28px', height: '28px', border: '2px solid #1A1714', background: '#E8622A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff' }}>LB</span>
+                <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>{locale === 'en' ? 'AI' : 'IA'}</span>
               </div>
               <div style={{ background: '#fff', border: '2px solid #1A1714', padding: '11px 15px', boxShadow: '3px 3px 0 rgba(26,23,20,0.07)' }}>
                 <p style={{ fontSize: '14px', opacity: 0.4, letterSpacing: '0.16em' }}>···</p>
-              </div>
-            </div>
-          )}
-
-          {/* Calendly slots */}
-          {showSlots && slots.length > 0 && (
-            <div style={{ border: '2px solid #1A1714', padding: '16px', background: '#fff', boxShadow: '3px 3px 0 rgba(26,23,20,0.07)' }}>
-              <p style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px', color: '#1A1714', opacity: 0.5 }}>
-                {locale === 'fr' ? 'Créneaux disponibles' : locale === 'es' ? 'Horarios disponibles' : 'Available slots'}
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {slots.map((slot, i) => (
-                  <a key={i} href={slot.schedulingUrl} target="_blank" rel="noreferrer"
-                    style={{ display: 'block', padding: '10px 14px', border: '2px solid #E8622A', color: '#1A1714', textDecoration: 'none', fontSize: '13px', fontWeight: 600, transition: 'all 0.1s', background: 'transparent' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#E8622A'; e.currentTarget.style.color = '#fff'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1A1714'; }}>
-                    {formatSlot(slot.startTime)} →
-                  </a>
-                ))}
               </div>
             </div>
           )}
@@ -191,8 +208,32 @@ export default function ChatSection() {
             </div>
           )}
 
-          <div ref={bottomRef} />
+          <div />
         </div>
+
+        {/* Calendly slots — fixed above input */}
+        {showSlots && (
+          <div style={{ borderTop: '2px solid #1A1714', padding: '14px 20px', background: '#F5EFE5', flexShrink: 0 }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px', color: '#1A1714', opacity: 0.4 }}>
+              {locale === 'fr' ? 'Créneaux disponibles' : locale === 'es' ? 'Horarios disponibles' : 'Available slots'}
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {slots.length > 0 ? slots.map((slot, i) => (
+                <a key={i} href={slot.schedulingUrl} target="_blank" rel="noreferrer"
+                  style={{ display: 'block', padding: '10px 14px', border: '2px solid #E8622A', color: '#1A1714', textDecoration: 'none', fontSize: '13px', fontWeight: 600, transition: 'all 0.1s', background: 'transparent' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#E8622A'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1A1714'; }}>
+                  {formatSlot(slot.startTime)} →
+                </a>
+              )) : (
+                <a href="https://calendly.com/hello-louisburette/30min" target="_blank" rel="noreferrer"
+                  style={{ display: 'block', padding: '10px 14px', border: '2px solid #E8622A', background: '#E8622A', color: '#fff', textDecoration: 'none', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', textAlign: 'center' }}>
+                  {locale === 'fr' ? 'Réserver un appel →' : locale === 'es' ? 'Reservar una llamada →' : 'Book a call →'}
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Choices or default suggestions */}
         {(choices.length > 0 || !loading) && (

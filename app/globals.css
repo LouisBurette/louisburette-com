@@ -40,4 +40,6 @@ body {
   .nav-hamburger { display: block !important; }
   .section-padding { padding: 48px 20px !important; }
   .chat-input-row { flex-direction: column !important; }
+  .chat-input-row input, .chat-input-row button { width: 100% !important; box-sizing: border-box; }
+  .chat-messages { height: 55vh !important; }
 }
