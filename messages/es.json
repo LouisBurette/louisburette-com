@@ -19,6 +19,8 @@
     "email_placeholder": "Tu email para recibir el resumen…",
     "email_submit": "Recibir el resumen →",
     "email_sent": "¡Email enviado!",
+    "expand": "Ampliar ↗",
+    "collapse": "← Volver",
     "error": "Ha ocurrido un error. Contacta a Louis directamente: hello@louisburette.com"
   },
   "expertise": {

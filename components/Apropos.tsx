@@ -6,7 +6,7 @@ export default function Apropos() {
   const sectors = t.raw('sectors') as string[];
 
   return (
-    <section id="parcours" style={{ padding: '80px 48px', background: '#F5EFE5', color: '#1A1714', borderBottom: '3px solid #E8622A' }}>
+    <section id="parcours" className="section-padding" style={{ padding: '80px 48px', background: '#F5EFE5', color: '#1A1714', borderBottom: '3px solid #E8622A' }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'baseline', marginBottom: '64px' }}>
         <span style={{ fontSize: '11px', opacity: 0.3, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>{t('num')}</span>
         <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,52px)' }}>{t('title')}</h2>

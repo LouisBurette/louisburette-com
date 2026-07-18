@@ -76,7 +76,7 @@ export default function TrailFooter() {
   }, []);
 
   return (
-    <section id="trail-section" ref={sectionRef} style={{ padding: '80px 48px 44px', background: '#1B3A22', color: '#F5EFE5', position: 'relative', overflow: 'hidden', borderTop: '3px solid #1A1714', minHeight: '440px', display: 'flex', flexDirection: 'column' }}>
+    <section id="trail-section" ref={sectionRef} className="section-padding" style={{ padding: '80px 48px 44px', background: '#1B3A22', color: '#F5EFE5', position: 'relative', overflow: 'hidden', borderTop: '3px solid #1A1714', minHeight: '440px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', zIndex: 2, maxWidth: '560px' }}>
         <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,56px)', lineHeight: 1.05, marginBottom: '20px' }}>
           {t('title_1')}<br />{t('title_2')}
@@ -85,7 +85,7 @@ export default function TrailFooter() {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: '220px', marginTop: '32px' }}>
-        <svg id="elev-svg" viewBox="0 0 1400 300" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '340px', display: 'block', pointerEvents: 'none' }}>
+        <svg id="elev-svg" className="trail-svg" viewBox="0 0 1400 300" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '340px', display: 'block', pointerEvents: 'none' }}>
           <defs>
             <clipPath id="elev-reveal">
               <rect ref={rectRef} x="0" y="0" width="0" height="300" />

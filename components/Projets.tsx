@@ -11,7 +11,7 @@ export default function Projets() {
   }));
 
   return (
-    <section id="projets" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
+    <section id="projets" className="section-padding" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'baseline', marginBottom: '48px' }}>
         <span style={{ fontSize: '11px', opacity: 0.3, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>{t('num')}</span>
         <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,56px)', lineHeight: 1.05 }}>{t('title')}</h2>
@@ -43,7 +43,7 @@ export default function Projets() {
         <span style={{ fontSize: '11px', opacity: 0.4, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>{t('missions_label')}</span>
         <span style={{ fontSize: '11px', opacity: 0.55, fontWeight: 600 }}>{t('scroll_hint')}</span>
       </div>
-      <div className="missions-scroll" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '0 -48px', padding: '0 48px 4px' }}>
+      <div className="missions-scroll missions-bleed" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '0 -48px', padding: '0 48px 4px' }}>
         <div style={{ display: 'flex', gap: '16px', width: 'max-content' }}>
           {missions.map((m, i) => (
             <div key={i} style={{ width: '280px', flexShrink: 0, border: '3px solid #1A1714', borderTop: '4px solid #E8622A', padding: '28px 24px', display: 'flex', flexDirection: 'column', background: '#F5EFE5' }}>

@@ -28,18 +28,26 @@ body {
 /* Responsive layout helpers */
 @media (max-width: 768px) {
   .expertise-grid { grid-template-columns: 1fr !important; }
+  .expertise-grid > div { border-right: none !important; }
   .projets-founders { grid-template-columns: 1fr !important; }
+  .projets-founders > div { border-right: none !important; }
 }
 
 .nav-hamburger { display: none; }
 
 @media (max-width: 640px) {
+  nav { padding: 0 20px !important; }
   .hero-layout { flex-direction: column !important; }
-  .hero-photo { width: 100% !important; max-width: 340px; margin: 0 auto; }
+  .hero-photo { width: 100% !important; max-width: 310px; margin: 0 auto; }
+  .hero-photo-inner { width: 100% !important; height: auto !important; aspect-ratio: 340 / 420; }
   .nav-links { display: none !important; }
   .nav-hamburger { display: block !important; }
   .section-padding { padding: 48px 20px !important; }
   .chat-input-row { flex-direction: column !important; }
   .chat-input-row input, .chat-input-row button { width: 100% !important; box-sizing: border-box; }
   .chat-messages { height: 55vh !important; }
+  .missions-bleed { margin-left: -20px !important; margin-right: -20px !important; padding-left: 20px !important; padding-right: 20px !important; }
+  .tftp-card { width: 160px !important; height: 160px !important; }
+  .partenaire-layout { gap: 32px !important; }
+  .trail-svg { height: 200px !important; }
 }

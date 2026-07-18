@@ -5,7 +5,7 @@ import Image from 'next/image';
 export default function Hero() {
   const t = useTranslations('hero');
   return (
-    <section style={{ minHeight: 'calc(100vh - 62px)', padding: '72px 48px 80px', borderBottom: '3px solid #1A1714', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#F5EFE5' }}>
+    <section className="section-padding" style={{ minHeight: 'calc(100vh - 62px)', padding: '72px 48px 80px', borderBottom: '3px solid #1A1714', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#F5EFE5' }}>
       <div className="hero-layout" style={{ display: 'flex', gap: '48px', alignItems: 'center', flexWrap: 'wrap' }}>
         {/* Left */}
         <div style={{ flex: 1, minWidth: '320px', display: 'flex', flexDirection: 'column', gap: '40px', animation: 'fadeUp 0.5s ease both' }}>
@@ -46,7 +46,7 @@ export default function Hero() {
         </div>
         {/* Photo */}
         <div className="hero-photo" style={{ flexShrink: 0, animation: 'fadeUp 0.5s 0.15s ease both', opacity: 0, animationFillMode: 'both' }}>
-          <div style={{ width: '340px', height: '420px', border: '3px solid #1A1714', overflow: 'hidden', transform: 'rotate(-1.5deg)', boxShadow: '8px 8px 0 #E8622A' }}>
+          <div className="hero-photo-inner" style={{ width: '100%', maxWidth: '340px', height: '420px', border: '3px solid #1A1714', overflow: 'hidden', transform: 'rotate(-1.5deg)', boxShadow: '8px 8px 0 #E8622A' }}>
             <Image src="/photo.png" alt="Louis Burette" width={340} height={420} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} priority />
           </div>
         </div>

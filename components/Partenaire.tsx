@@ -11,13 +11,13 @@ export default function Partenaire() {
   const tripled = [...companies, ...companies, ...companies];
 
   return (
-    <section style={{ padding: '80px 48px', background: '#0E2215', color: '#F5EFE5', borderBottom: '3px solid #1A1714' }}>
+    <section className="section-padding" style={{ padding: '80px 48px', background: '#0E2215', color: '#F5EFE5', borderBottom: '3px solid #1A1714' }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'baseline', marginBottom: '44px' }}>
         <span style={{ fontSize: '11px', opacity: 0.55, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, color: '#7FB069' }}>{t('label')}</span>
         <span style={{ flex: 1, height: '2px', backgroundColor: 'rgba(127,176,105,0.18)', display: 'block' }} />
       </div>
-      <div style={{ display: 'flex', gap: '64px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ flexShrink: 0, width: '210px', height: '210px', border: '3px solid #F5EFE5', background: '#F5EFE5', overflow: 'hidden', transform: 'rotate(-1.5deg)', boxShadow: '8px 8px 0 #7FB069', position: 'relative' }}>
+      <div className="partenaire-layout" style={{ display: 'flex', gap: '64px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="tftp-card" style={{ flexShrink: 0, width: '210px', height: '210px', border: '3px solid #F5EFE5', background: '#F5EFE5', overflow: 'hidden', transform: 'rotate(-1.5deg)', boxShadow: '8px 8px 0 #7FB069', position: 'relative' }}>
           <Image src="/tftp.png" alt="Team for the Planet" fill style={{ objectFit: 'contain', padding: '16px' }} />
         </div>
         <div style={{ flex: 1, minWidth: '320px' }}>

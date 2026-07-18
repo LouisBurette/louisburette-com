@@ -6,6 +6,7 @@ type Message = { role: 'user' | 'assistant'; content: string };
 type Slot = { startTime: string; schedulingUrl: string };
 
 function stripMarkdown(text: string): string {
+  if (!text) return '';
   return text
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/\*(.*?)\*/g, '$1')
@@ -60,7 +61,7 @@ export default function ChatSection() {
         body: JSON.stringify({ messages: msgs, lang: locale }),
       });
       const data = await res.json();
-      const assistantMsg: Message = { role: 'assistant', content: data.message };
+      const assistantMsg: Message = { role: 'assistant', content: data.message || t('error') };
       setMessages(isInit ? [assistantMsg] : prev => [...prev, assistantMsg]);
       setChoices(data.choices || []);
       setIsComplete(data.isComplete || false);
@@ -115,7 +116,7 @@ export default function ChatSection() {
   }
 
   return (
-    <section id="contact" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
+    <section id="contact" className="section-padding" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
       <div style={{ marginBottom: '40px' }}>
         <p style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.35, fontWeight: 700, marginBottom: '12px' }}>{t('label')}</p>
         <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,56px)', lineHeight: 1.05 }}>{t('title')}</h2>
@@ -136,14 +137,14 @@ export default function ChatSection() {
           {isFullscreen ? (
             <button onClick={() => setIsFullscreen(false)}
               style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
-              aria-label="Fermer">
-              ← Retour
+              aria-label={t('collapse')}>
+              {t('collapse')}
             </button>
           ) : (
             <button onClick={() => setIsFullscreen(true)}
               style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
-              aria-label="Plein écran">
-              Agrandir ↗
+              aria-label={t('expand')}>
+              {t('expand')}
             </button>
           )}
         </div>

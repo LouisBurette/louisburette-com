@@ -17,7 +17,7 @@ export default function Expertise() {
     { key: 'card4', tagKey: 'card4', borderRight: false, borderBottom: false },
   ];
   return (
-    <section id="expertise" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
+    <section id="expertise" className="section-padding" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'baseline', marginBottom: '48px' }}>
         <span style={{ fontSize: '11px', opacity: 0.3, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>{t('num')}</span>
         <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,56px)', lineHeight: 1.05 }}>{t('title')}</h2>
