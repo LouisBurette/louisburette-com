@@ -3,7 +3,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const res = await fetch(process.env.N8N_CHAT_WEBHOOK_URL!, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': process.env.N8N_WEBHOOK_SECRET! },
       body: JSON.stringify(body),
     });
     if (!res.ok) return Response.json({ error: 'Service unavailable' }, { status: 502 });
