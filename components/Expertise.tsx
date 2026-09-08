@@ -23,11 +23,17 @@ export default function Expertise() {
       <div className="section-pad">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(320px,100%),1fr))', gap: '4px', border: '4px solid #0A0A0A', boxShadow: '12px 12px 0 #0A0A0A', backgroundColor: '#0A0A0A' }}>
           {cards.map((key, i) => (
-            <div key={key} data-reveal style={{ padding: 'clamp(28px,4vw,40px) clamp(24px,3.5vw,36px)', backgroundColor: '#fff', display: 'flex', flexDirection: 'column' }}>
+            <div key={key} data-reveal style={{ padding: 'clamp(28px,4vw,40px) clamp(24px,3.5vw,36px)', backgroundColor: '#fff', display: 'flex', flexDirection: 'column', containerType: 'inline-size' }}>
               <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', letterSpacing: '0.18em', color: '#5B2BFF', fontWeight: 700, marginBottom: '18px' }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(19px,1.75vw,26px)', lineHeight: 1.1, letterSpacing: '-0.02em', textTransform: 'uppercase', marginBottom: '18px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+              {/* Taille calée sur la largeur de la carte, pas du viewport : à 600px
+                  la carte fait 538px, à 1600px seulement 370px, donc vw et largeur
+                  de carte varient en sens inverse. 5.9cqw est le maximum qui garde
+                  la seconde ligne ("le mauvais pari.", "la mala apuesta.") sur une
+                  seule ligne, soit 2 lignes de titre au total. Vérifié de 375 à
+                  1600px sur les trois langues ; 6.3cqw déborde déjà. */}
+              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(15px,5.9cqw,26px)', lineHeight: 1.1, letterSpacing: '-0.02em', textTransform: 'uppercase', marginBottom: '18px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
                 <span>{t(`${key}_h`)}</span>
                 <span style={{ backgroundColor: '#EDFF00', padding: '0 5px' }}>{t(`${key}_em`)}</span>
               </h3>
