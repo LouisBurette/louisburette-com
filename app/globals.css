@@ -1,53 +1,87 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  background: #F5EFE5;
-  color: #1A1714;
-  font-family: 'Space Grotesk', sans-serif;
+  background: #F3F1EC;
+  color: #0A0A0A;
+  font-family: 'Archivo', sans-serif;
   overflow-x: hidden;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes wipeIn {
+  from { clip-path: inset(-24px 100% -24px -24px); transform: translateX(-14px); }
+  to   { clip-path: inset(-24px); transform: translateX(0); }
 }
-
 @keyframes marqueeScroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-
-@keyframes marqueeScrollTftp {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-33.3333%); }
+@keyframes blink {
+  0%, 60%   { opacity: 1; }
+  61%, 100% { opacity: 0.15; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ---------- layout ---------- */
+.gutter { padding-left: clamp(18px,4.5vw,48px); padding-right: clamp(18px,4.5vw,48px); }
+.section-pad { padding: clamp(34px,6vw,56px) clamp(18px,4.5vw,48px) clamp(52px,7vw,80px); }
+.section-bar {
+  position: sticky; top: 62px; z-index: 20;
+  background: #F3F1EC; border-bottom: 3px solid #0A0A0A;
+  padding: 17px clamp(18px,4.5vw,48px);
+  display: flex; align-items: baseline; gap: 14px;
+}
+.section-bar-title {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.section-bar-rule { flex: 1; height: 3px; background: #0A0A0A; }
+
+/* ---------- interactions ---------- */
+.btn-brut { transition: transform .1s linear, box-shadow .1s linear; }
+.btn-brut:hover { transform: translate(7px, 7px); box-shadow: 0 0 0 #0A0A0A !important; }
+
+.link-mono { transition: background .16s ease, color .16s ease, border-color .16s ease; }
+.link-mono:hover { background: #5B2BFF; color: #F3F1EC; border-bottom-color: #0A0A0A; }
+
+.nav-link { transition: color .14s ease; }
+.nav-link:hover { color: #5B2BFF; }
+
+.chip { transition: background .1s linear; }
+.chip:hover { background: #EDFF00; }
+
+.send-btn { transition: background .1s linear, color .1s linear; }
+.send-btn:not(:disabled):hover { background: #5B2BFF; color: #fff; }
+
+.slot-link { transition: background .1s linear, color .1s linear; }
+.slot-link:hover { background: #5B2BFF; color: #fff; }
+
+/* ---------- scroll effects (enabled by the inline head script) ---------- */
+html.fx [data-reveal] { clip-path: inset(-24px 100% -24px -24px); transform: translateX(-14px); }
+html.fx [data-reveal][data-shown] { clip-path: none; transform: none; }
+html.fx [data-strike-bar] { transform: scaleX(0); }
 
 .missions-scroll::-webkit-scrollbar { display: none; }
 .missions-scroll { scrollbar-width: none; }
 
-/* Responsive layout helpers */
-@media (max-width: 768px) {
-  .expertise-grid { grid-template-columns: 1fr !important; }
-  .expertise-grid > div { border-right: none !important; }
-  .projets-founders { grid-template-columns: 1fr !important; }
-  .projets-founders > div { border-right: none !important; }
+/* ---------- responsive ---------- */
+.nav-mobile { display: none; }
+@media (max-width: 899px) {
+  .nav-desktop { display: none !important; }
+  .nav-mobile { display: flex !important; }
 }
 
-.nav-hamburger { display: none; }
-
 @media (max-width: 640px) {
-  nav { padding: 0 20px !important; }
-  .hero-layout { flex-direction: column !important; }
-  .hero-photo { width: 100% !important; max-width: 310px; margin: 0 auto; }
-  .hero-photo-inner { width: 100% !important; height: auto !important; aspect-ratio: 340 / 420; }
-  .nav-links { display: none !important; }
-  .nav-hamburger { display: block !important; }
-  .section-padding { padding: 48px 20px !important; }
-  .chat-input-row { flex-direction: column !important; }
-  .chat-input-row input, .chat-input-row button { width: 100% !important; box-sizing: border-box; }
-  .chat-messages { height: 55vh !important; }
-  .missions-bleed { margin-left: -20px !important; margin-right: -20px !important; padding-left: 20px !important; padding-right: 20px !important; }
-  .tftp-card { width: 160px !important; height: 160px !important; }
-  .partenaire-layout { gap: 32px !important; }
-  .trail-svg { height: 200px !important; }
+  .chat-input-row { flex-direction: column !important; align-items: stretch !important; }
+  .chat-input-row input, .chat-input-row button { width: 100% !important; }
+  .chat-messages { height: 58vh !important; }
+  .trail-svg { height: 220px !important; }
+  .footer-bottom { flex-direction: column !important; align-items: flex-start !important; }
+  .footer-bottom > div { align-items: flex-start !important; }
 }

@@ -5,6 +5,8 @@ import { useTranslations, useLocale } from 'next-intl';
 type Message = { role: 'user' | 'assistant'; content: string };
 type Slot = { startTime: string; schedulingUrl: string };
 
+const CALENDLY = 'https://calendly.com/hello-louisburette/30min';
+
 function stripMarkdown(text: string): string {
   if (!text) return '';
   return text
@@ -15,6 +17,13 @@ function stripMarkdown(text: string): string {
     .replace(/\s*—\s*/g, ' - ')
     .replace(/\s*--\s*/g, ' - ');
 }
+
+const monoLabel: React.CSSProperties = {
+  fontFamily: "'Space Mono', monospace",
+  fontSize: '10px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+};
 
 export default function ChatSection() {
   const t = useTranslations('chat');
@@ -115,152 +124,143 @@ export default function ChatSection() {
     });
   }
 
+  const avatar = (
+    <div style={{ width: '30px', height: '30px', border: '3px solid #0A0A0A', backgroundColor: '#5B2BFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <span style={{ fontFamily: "'Syne', sans-serif", fontSize: '9px', fontWeight: 800, color: '#fff' }}>LB</span>
+    </div>
+  );
+
   return (
-    <section id="contact" className="section-padding" style={{ padding: '80px 48px', borderBottom: '3px solid #1A1714', background: '#F5EFE5' }}>
-      <div style={{ marginBottom: '40px' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.35, fontWeight: 700, marginBottom: '12px' }}>{t('label')}</p>
-        <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(36px,4vw,56px)', lineHeight: 1.05 }}>{t('title')}</h2>
-        <p style={{ fontSize: '16px', opacity: 0.55, marginTop: '10px', fontWeight: 300, maxWidth: '560px' }}>{t('subtitle')}</p>
+    <section id="agent-ia" style={{ borderBottom: '4px solid #0A0A0A', background: '#F3F1EC', scrollMarginTop: '62px' }}>
+      <div className="section-bar">
+        <span className="section-bar-title">{t('label')}</span>
+        <span className="section-bar-rule" />
       </div>
 
-      <div style={isFullscreen
-        ? { position: 'fixed', inset: 0, zIndex: 500, border: 'none', boxShadow: 'none', display: 'flex', flexDirection: 'column', background: '#F5EFE5' }
-        : { maxWidth: '920px', margin: '0 auto', border: '3px solid #1A1714', boxShadow: '8px 8px 0 #E8622A', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {/* Title bar */}
-        <div style={{ background: '#1A1714', padding: '13px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#2D5A27', display: 'block' }} />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(245,239,229,0.6)', letterSpacing: '0.04em' }}>
-              {locale === 'fr' ? 'Assistant personnel de Louis' : locale === 'es' ? 'Asistente personal de Louis' : "Louis's personal assistant"}
-            </span>
-          </div>
-          {isFullscreen ? (
-            <button onClick={() => setIsFullscreen(false)}
-              style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
-              aria-label={t('collapse')}>
-              {t('collapse')}
-            </button>
-          ) : (
-            <button onClick={() => setIsFullscreen(true)}
-              style={{ background: 'rgba(245,239,229,0.15)', border: '1px solid rgba(245,239,229,0.3)', cursor: 'pointer', color: '#F5EFE5', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, padding: '5px 14px', letterSpacing: '0.04em', lineHeight: 1 }}
-              aria-label={t('expand')}>
-              {t('expand')}
-            </button>
-          )}
+      <div className="section-pad">
+        <div data-reveal style={{ marginBottom: '36px' }}>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(32px,4vw,54px)', lineHeight: 0.98, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{t('title')}</h2>
+          <p style={{ fontSize: '16px', color: '#4A463F', marginTop: '12px', maxWidth: '560px', lineHeight: 1.6 }}>{t('subtitle')}</p>
         </div>
 
-        {/* Messages */}
-        <div ref={messagesContainerRef} className="chat-messages" style={{ height: isFullscreen ? undefined : '340px', flex: isFullscreen ? 1 : undefined, overflowY: 'auto', padding: '24px', background: '#F5EFE5', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          {messages.map((msg, i) => (
-            msg.role === 'assistant' ? (
-              <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <div style={{ width: '28px', height: '28px', border: '2px solid #1A1714', background: '#E8622A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>{locale === 'en' ? 'AI' : 'IA'}</span>
-                </div>
-                <div style={{ background: '#fff', border: '2px solid #1A1714', padding: '11px 15px', maxWidth: '540px', boxShadow: '3px 3px 0 rgba(26,23,20,0.07)' }}>
-                  <p style={{ fontSize: '14px', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{stripMarkdown(msg.content)}</p>
-                </div>
-              </div>
-            ) : (
-              <div key={i} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <div style={{ background: '#1A1714', padding: '11px 15px', maxWidth: '480px' }}>
-                  <p style={{ fontSize: '14px', lineHeight: 1.65, color: '#F5EFE5' }}>{msg.content}</p>
-                </div>
-              </div>
-            )
-          ))}
+        <div style={isFullscreen
+          ? { position: 'fixed', inset: 0, zIndex: 500, border: 'none', boxShadow: 'none', display: 'flex', flexDirection: 'column', background: '#F3F1EC' }
+          : { maxWidth: '920px', margin: '0 auto', border: '4px solid #0A0A0A', boxShadow: '12px 12px 0 #5B2BFF', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#F3F1EC' }}>
 
-          {loading && (
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-              <div style={{ width: '28px', height: '28px', border: '2px solid #1A1714', background: '#E8622A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>{locale === 'en' ? 'AI' : 'IA'}</span>
-              </div>
-              <div style={{ background: '#fff', border: '2px solid #1A1714', padding: '11px 15px', boxShadow: '3px 3px 0 rgba(26,23,20,0.07)' }}>
-                <p style={{ fontSize: '14px', opacity: 0.4, letterSpacing: '0.16em' }}>···</p>
-              </div>
+          {/* Title bar */}
+          <div style={{ backgroundColor: '#0A0A0A', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+              <span style={{ width: '9px', height: '9px', backgroundColor: '#EDFF00', display: 'block', flexShrink: 0 }} />
+              <span style={{ ...monoLabel, color: '#F3F1EC', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t('assistant')}</span>
             </div>
-          )}
-
-          {/* Email completion */}
-          {isComplete && !emailSent && (
-            <div style={{ border: '2px solid #1A1714', padding: '16px', background: '#fff' }}>
-              <p style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>
-                {locale === 'fr' ? 'Recevoir un résumé de notre échange par email :' : locale === 'es' ? 'Recibir un resumen por email:' : 'Get a summary of our conversation:'}
-              </p>
-              <div className="chat-input-row" style={{ display: 'flex', gap: '8px' }}>
-                <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)}
-                  placeholder={t('email_placeholder')}
-                  style={{ flex: 1, border: '2px solid #1A1714', padding: '10px 14px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', background: '#fff', outline: 'none', color: '#1A1714' }} />
-                <button onClick={submitEmail}
-                  style={{ padding: '10px 20px', border: '2px solid #E8622A', background: '#E8622A', color: '#fff', fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', boxShadow: '3px 3px 0 #1A1714', whiteSpace: 'nowrap' }}>
-                  {t('email_submit')}
-                </button>
-              </div>
-            </div>
-          )}
-          {isComplete && emailSent && (
-            <div style={{ padding: '12px 16px', background: 'rgba(45,90,39,0.07)', border: '2px solid #2D5A27', color: '#2D5A27', fontSize: '13px', fontWeight: 600 }}>
-              ✓ {t('email_sent')}
-            </div>
-          )}
-          {emailError && !emailSent && (
-            <div style={{ padding: '12px 16px', background: 'rgba(220,38,38,0.07)', border: '2px solid #DC2626', color: '#DC2626', fontSize: '13px', fontWeight: 600 }}>
-              {locale === 'fr' ? 'Erreur lors de l\'envoi. Veuillez réessayer.' : locale === 'es' ? 'Error al enviar. Por favor, inténtalo de nuevo.' : 'Error sending. Please try again.'}
-            </div>
-          )}
-
-          <div />
-        </div>
-
-        {/* Calendly slots — fixed above input */}
-        {showSlots && (
-          <div style={{ borderTop: '2px solid #1A1714', padding: '14px 20px', background: '#F5EFE5', flexShrink: 0 }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px', color: '#1A1714', opacity: 0.4 }}>
-              {locale === 'fr' ? 'Créneaux disponibles' : locale === 'es' ? 'Horarios disponibles' : 'Available slots'}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {slots.length > 0 ? slots.map((slot, i) => (
-                <a key={i} href={slot.schedulingUrl} target="_blank" rel="noreferrer"
-                  style={{ display: 'block', padding: '10px 14px', border: '2px solid #E8622A', color: '#1A1714', textDecoration: 'none', fontSize: '13px', fontWeight: 600, transition: 'all 0.1s', background: 'transparent' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#E8622A'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1A1714'; }}>
-                  {formatSlot(slot.startTime)} →
-                </a>
-              )) : (
-                <a href="https://calendly.com/hello-louisburette/30min" target="_blank" rel="noreferrer"
-                  style={{ display: 'block', padding: '10px 14px', border: '2px solid #E8622A', background: '#E8622A', color: '#fff', textDecoration: 'none', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', textAlign: 'center' }}>
-                  {locale === 'fr' ? 'Réserver un appel →' : locale === 'es' ? 'Reservar una llamada →' : 'Book a call →'}
-                </a>
-              )}
-            </div>
+            <button
+              onClick={() => setIsFullscreen(f => !f)}
+              aria-label={isFullscreen ? t('collapse') : t('expand')}
+              style={{ border: '2px solid #F3F1EC', background: 'transparent', cursor: 'pointer', color: '#F3F1EC', fontFamily: "'Space Mono', monospace", fontSize: '11px', fontWeight: 700, padding: '5px 12px', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1.4, whiteSpace: 'nowrap', flexShrink: 0 }}>
+              {isFullscreen ? t('collapse') : t('expand')}
+            </button>
           </div>
-        )}
 
-        {/* Choices or default suggestions */}
-        {(choices.length > 0 || !loading) && (
-          <div style={{ padding: '10px 20px', borderTop: '2px solid rgba(26,23,20,0.1)', background: '#F5EFE5', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {(choices.length > 0 ? choices : []).map((choice, i) => (
-              <button key={i} onClick={() => sendMessage(choice)}
-                style={{ padding: '6px 14px', border: '2px solid rgba(26,23,20,0.25)', background: 'transparent', fontFamily: "'Space Grotesk', sans-serif", fontSize: '11px', fontWeight: 600, cursor: 'pointer', color: '#1A1714', letterSpacing: '0.04em', transition: 'all 0.1s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1714'; e.currentTarget.style.background = '#1A1714'; e.currentTarget.style.color = '#F5EFE5'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,23,20,0.25)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1A1714'; }}>
-                {choice}
-              </button>
+          {/* Messages */}
+          <div ref={messagesContainerRef} className="chat-messages" style={{ height: isFullscreen ? undefined : 'clamp(260px,45vh,340px)', flex: isFullscreen ? 1 : undefined, overflowY: 'auto', padding: 'clamp(16px,3vw,24px)', background: '#F3F1EC', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {messages.map((msg, i) => (
+              msg.role === 'assistant' ? (
+                <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  {avatar}
+                  <div style={{ backgroundColor: '#fff', border: '3px solid #0A0A0A', padding: '12px 16px', maxWidth: '540px' }}>
+                    <p style={{ fontSize: '14.5px', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{stripMarkdown(msg.content)}</p>
+                  </div>
+                </div>
+              ) : (
+                <div key={i} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <div style={{ backgroundColor: '#0A0A0A', border: '3px solid #0A0A0A', padding: '12px 16px', maxWidth: '480px' }}>
+                    <p style={{ fontSize: '14.5px', lineHeight: 1.6, color: '#F3F1EC' }}>{msg.content}</p>
+                  </div>
+                </div>
+              )
             ))}
-          </div>
-        )}
 
-        {/* Input */}
-        <div className="chat-input-row" style={{ padding: '14px 20px', borderTop: '3px solid #1A1714', background: '#F5EFE5', display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input type="text" value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-            placeholder={t('placeholder')}
-            style={{ flex: 1, border: '2px solid #1A1714', padding: '10px 14px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', background: '#fff', outline: 'none', color: '#1A1714' }} />
-          <button onClick={() => sendMessage()}
-            disabled={loading}
-            style={{ padding: '10px 20px', border: '2px solid #E8622A', background: '#E8622A', color: '#fff', fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap', boxShadow: '3px 3px 0 #1A1714', opacity: loading ? 0.6 : 1 }}>
-            {t('send')}
-          </button>
+            {loading && (
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                {avatar}
+                <div style={{ backgroundColor: '#fff', border: '3px solid #0A0A0A', padding: '12px 16px' }}>
+                  <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '14px', letterSpacing: '0.2em' }}>···</p>
+                </div>
+              </div>
+            )}
+
+            {/* Email completion */}
+            {isComplete && !emailSent && (
+              <div style={{ border: '3px solid #0A0A0A', padding: '18px', backgroundColor: '#fff' }}>
+                <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '12px' }}>{t('email_prompt')}</p>
+                <div className="chat-input-row" style={{ display: 'flex', gap: '10px' }}>
+                  <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)}
+                    placeholder={t('email_placeholder')}
+                    style={{ flex: '1 1 160px', minWidth: 0, border: '3px solid #0A0A0A', padding: '12px 14px', fontFamily: "'Archivo', sans-serif", fontSize: '14px', background: '#fff', outline: 'none', color: '#0A0A0A' }} />
+                  <button onClick={submitEmail} className="send-btn"
+                    style={{ padding: '12px 20px', border: '3px solid #0A0A0A', backgroundColor: '#5B2BFF', color: '#fff', fontFamily: "'Syne', sans-serif", fontSize: '12px', fontWeight: 800, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                    {t('email_submit')}
+                  </button>
+                </div>
+              </div>
+            )}
+            {isComplete && emailSent && (
+              <div style={{ padding: '14px 18px', backgroundColor: '#EDFF00', border: '3px solid #0A0A0A', color: '#0A0A0A', fontFamily: "'Space Mono', monospace", fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em' }}>
+                ✓ {t('email_sent')}
+              </div>
+            )}
+            {emailError && !emailSent && (
+              <div style={{ padding: '14px 18px', backgroundColor: '#FF3D6B', border: '3px solid #0A0A0A', color: '#fff', fontFamily: "'Space Mono', monospace", fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em' }}>
+                {t('email_error')}
+              </div>
+            )}
+
+            <div />
+          </div>
+
+          {/* Calendly slots — fixed above input */}
+          {showSlots && (
+            <div style={{ borderTop: '3px solid #0A0A0A', padding: '14px 20px', background: '#F3F1EC', flexShrink: 0 }}>
+              <p style={{ ...monoLabel, fontWeight: 700, marginBottom: '10px', color: '#0A0A0A' }}>{t('slots_label')}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {slots.length > 0 ? slots.map((slot, i) => (
+                  <a key={i} href={slot.schedulingUrl} target="_blank" rel="noreferrer" className="slot-link"
+                    style={{ display: 'block', padding: '11px 14px', border: '3px solid #0A0A0A', backgroundColor: '#fff', color: '#0A0A0A', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                    {formatSlot(slot.startTime)} →
+                  </a>
+                )) : (
+                  <a href={CALENDLY} target="_blank" rel="noreferrer"
+                    style={{ display: 'block', padding: '12px 14px', border: '3px solid #0A0A0A', backgroundColor: '#5B2BFF', color: '#fff', textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'center' }}>
+                    {t('book_call')}
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Choices */}
+          {choices.length > 0 && (
+            <div style={{ padding: '12px 20px', borderTop: '3px solid #0A0A0A', background: '#F3F1EC', display: 'flex', gap: '8px', flexWrap: 'wrap', flexShrink: 0 }}>
+              {choices.map((choice, i) => (
+                <button key={i} onClick={() => sendMessage(choice)} className="chip"
+                  style={{ padding: '7px 14px', border: '3px solid #0A0A0A', backgroundColor: '#fff', fontFamily: "'Space Mono', monospace", fontSize: '11px', fontWeight: 700, cursor: 'pointer', color: '#0A0A0A', letterSpacing: '0.06em' }}>
+                  {choice}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input */}
+          <div className="chat-input-row" style={{ padding: '14px 20px', borderTop: '4px solid #0A0A0A', background: '#F3F1EC', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
+            <input type="text" value={input} onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+              placeholder={t('placeholder')}
+              style={{ flex: '1 1 180px', minWidth: 0, border: '3px solid #0A0A0A', padding: '13px 14px', fontFamily: "'Archivo', sans-serif", fontSize: '14px', background: '#fff', outline: 'none', color: '#0A0A0A' }} />
+            <button onClick={() => sendMessage()} disabled={loading} className="send-btn"
+              style={{ padding: '12px 22px', border: '3px solid #0A0A0A', backgroundColor: '#0A0A0A', color: '#EDFF00', fontFamily: "'Syne', sans-serif", fontSize: '12px', fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', opacity: loading ? 0.6 : 1 }}>
+              {t('send')}
+            </button>
+          </div>
         </div>
       </div>
     </section>
