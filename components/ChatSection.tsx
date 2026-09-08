@@ -38,10 +38,6 @@ export default function ChatSection() {
   const [choices, setChoices] = useState<string[]>([]);
   const [showSlots, setShowSlots] = useState(false);
   const [slots, setSlots] = useState<Slot[]>([]);
-  const [isComplete, setIsComplete] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -52,7 +48,7 @@ export default function ChatSection() {
   useEffect(() => {
     const el = messagesContainerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, loading, showSlots, isComplete]);
+  }, [messages, loading, showSlots]);
 
   useEffect(() => {
     if (isFullscreen) document.body.style.overflow = 'hidden';
@@ -73,8 +69,8 @@ export default function ChatSection() {
       const assistantMsg: Message = { role: 'assistant', content: data.message || t('error') };
       setMessages(isInit ? [assistantMsg] : prev => [...prev, assistantMsg]);
       setChoices(data.choices || []);
-      setIsComplete(data.isComplete || false);
-      if (data.showSlots) fetchSlots();
+      // Fin de conversation : on propose un créneau plutôt qu'un envoi d'email.
+      if (data.showSlots || data.isComplete) fetchSlots();
     } catch {
       const errMsg: Message = { role: 'assistant', content: t('error') };
       setMessages(isInit ? [errMsg] : prev => [...prev, errMsg]);
@@ -100,22 +96,6 @@ export default function ChatSection() {
       setSlots(data.slots || []);
       setShowSlots(true);
     } catch { /* silent */ }
-  }
-
-  async function submitEmail() {
-    if (!emailInput.trim() || emailSent) return;
-    try {
-      const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
-      const res = await fetch('/api/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailInput, transcript: messages, lang: locale, summary: lastAssistant?.content || '' }),
-      });
-      if (!res.ok) throw new Error('Failed');
-      setEmailSent(true);
-    } catch {
-      setEmailError(true);
-    }
   }
 
   function formatSlot(iso: string) {
@@ -186,32 +166,6 @@ export default function ChatSection() {
                 <div style={{ backgroundColor: '#fff', border: '3px solid #0A0A0A', padding: '12px 16px' }}>
                   <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '14px', letterSpacing: '0.2em' }}>···</p>
                 </div>
-              </div>
-            )}
-
-            {/* Email completion */}
-            {isComplete && !emailSent && (
-              <div style={{ border: '3px solid #0A0A0A', padding: '18px', backgroundColor: '#fff' }}>
-                <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '12px' }}>{t('email_prompt')}</p>
-                <div className="chat-input-row" style={{ display: 'flex', gap: '10px' }}>
-                  <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)}
-                    placeholder={t('email_placeholder')}
-                    style={{ flex: '1 1 160px', minWidth: 0, border: '3px solid #0A0A0A', padding: '12px 14px', fontFamily: "'Archivo', sans-serif", fontSize: '14px', background: '#fff', outline: 'none', color: '#0A0A0A' }} />
-                  <button onClick={submitEmail} className="send-btn"
-                    style={{ padding: '12px 20px', border: '3px solid #0A0A0A', backgroundColor: '#5B2BFF', color: '#fff', fontFamily: "'Syne', sans-serif", fontSize: '12px', fontWeight: 800, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                    {t('email_submit')}
-                  </button>
-                </div>
-              </div>
-            )}
-            {isComplete && emailSent && (
-              <div style={{ padding: '14px 18px', backgroundColor: '#EDFF00', border: '3px solid #0A0A0A', color: '#0A0A0A', fontFamily: "'Space Mono', monospace", fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em' }}>
-                ✓ {t('email_sent')}
-              </div>
-            )}
-            {emailError && !emailSent && (
-              <div style={{ padding: '14px 18px', backgroundColor: '#FF3D6B', border: '3px solid #0A0A0A', color: '#fff', fontFamily: "'Space Mono', monospace", fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em' }}>
-                {t('email_error')}
               </div>
             )}
 
